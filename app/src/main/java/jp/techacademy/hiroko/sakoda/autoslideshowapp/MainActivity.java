@@ -193,22 +193,30 @@ public class MainActivity extends AppCompatActivity {
                 null // ソート (null ソートなし)
         );
 
-        if (cursor.moveToFirst()) {
-            do {
-                // indexからIDを取得し、そのIDから画像のURIを取得する
-                int fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+        if (cursor.getCount() == 0) {
 
-                Long id = cursor.getLong(fieldIndex);
-                Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                uriArray.add(imageUri);
+            Toast.makeText(this, "写真を追加してください", Toast.LENGTH_LONG).show();
+            finish();
 
-            } while (cursor.moveToNext());
+        }else{
+
+            if (cursor.moveToFirst()) {
+                do {
+                    // indexからIDを取得し、そのIDから画像のURIを取得する
+                    int fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+
+                    Long id = cursor.getLong(fieldIndex);
+                    Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                    uriArray.add(imageUri);
+
+                } while (cursor.moveToNext());
+            }
+
+            mImageView.setImageURI(uriArray.get(0));
+            showNumberToTextView(1);
+
+            cursor.close();
         }
-
-        mImageView.setImageURI(uriArray.get(0));
-        showNumberToTextView(1);
-
-        cursor.close();
     }
 
     private void showNumberToTextView(int num) {
